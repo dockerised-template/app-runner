@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export REGISTRY=samjbro
-export APP_NAME=customer-services
+export APP_NAME=cops
 export RUN_NAME=app-runner
 export WEB_NAME=vuejs-frontend
 export API_NAME=laravel-backend
@@ -40,9 +40,11 @@ fi
 
 if [ $# -gt 0 ]; then
   if [ "$1" == "setup" ]; then
+    ./run.sh api dump
     ./run.sh api configure
-    ./run.sh api migrate
+    ./run.sh api migrate:refresh
     ./run.sh api seed
+    ./run.sh web yarn
   elif [ "$1" == "web" ]; then
     shift 1
     if [ "$1" == "test" ]; then
@@ -73,6 +75,8 @@ if [ $# -gt 0 ]; then
       ./run.sh api art jwt:secret
     elif [ "$1" == "migrate" ]; then
       $COMPOSE run --rm api php artisan migrate
+    elif [ "$1" == "migrate:refresh" ]; then
+      $COMPOSE run --rm api php artisan migrate:refresh
     elif [ "$1" == "seed" ]; then
       $COMPOSE run --rm api php artisan db:seed
     elif [ "$1" == "dump" ]; then
